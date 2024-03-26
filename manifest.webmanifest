@@ -3,7 +3,7 @@
     "background_color": "#f69435",
     "display": "standalone",
     "scope": "/",
-    "start_url": "/index.html",
+    "start_url": "https://isikdev.github.io/demo-install-pwa/",
     "name": "Demo",
     "short_name": "Demo",
     "description": "Demo PWA App generator",
