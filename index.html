@@ -12,10 +12,33 @@
     </head>
     <body>
         <div class="container">
-            <button type="button" class="btn btn-primary my-5">Установить
+            <button id="installButton" type="button"
+                class="btn btn-primary my-5" style="display: none;">Установить
                 PWA</button>
         </div>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+        window.addEventListener('beforeinstallprompt', (event) => {
+            // Предотвратить открытие встроенного диалога установки
+            event.preventDefault();
+            // Показать кнопку установки
+            document.getElementById('installButton').style.display = 'block';
+
+            // Обработчик события для установки приложения
+            document.getElementById('installButton').addEventListener('click', () => {
+                // Показать диалог установки
+                event.prompt();
+                // Ожидание ответа пользователя на диалог установки
+                event.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Пользователь установил приложение');
+                    } else {
+                        console.log('Пользователь отменил установку');
+                    }
+                });
+            });
+        });
+    </script>
     </body>
 </html>
