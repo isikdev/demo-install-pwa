@@ -10,13 +10,12 @@
         <link rel="manifest" href="./manifest.webmanifest">
         <script src="./generate-sw.js"></script>
 
-        <meta name="referrer" content="unsafe-url">
-        <meta name="referrer" content="origin-when-cross-origin">
-        <meta name="referrer" content="origin-when-cross-origin">
-        <meta name="referrer" content="unsafe-url">
-        <meta name="referrer" content="origin-when-cross-origin">
-        <meta name="referrer" content="origin-when-cross-origin">
-        <meta name="referrer" content="unsafe-url">
+        <!-- Возвращаем диалоговое окно установки PWA -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent">
     </head>
     <body>
         <div class="container">
@@ -37,22 +36,21 @@
             });
         }
 
+        // Отслеживаем событие установки PWA
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
+            // Отображаем кнопку установки PWA
             document.getElementById('installButton').style.display = 'block';
-            event.prompt();
-            event.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('Пользователь установил приложение');
-                } else {
-                    console.log('Пользователь отменил установку');
-                }
-            });
+            // Передаем событие в deferredPrompt для показа диалога установки
+            deferredPrompt = event;
         });
 
+        // Обработчик для кнопки установки PWA
         document.getElementById('installButton').addEventListener('click', () => {
             document.getElementById('installButton').style.display = 'none';
+            // Показываем диалог установки PWA
             deferredPrompt.prompt();
+            // Ожидаем ответа пользователя на диалог установки
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('Пользователь установил приложение');
