@@ -13,27 +13,40 @@
     <body>
         <div class="container">
             <button id="installButton" type="button"
-                class="btn btn-primary my-5">Установить PWA</button>
+                class="btn btn-primary my-5" style="display: none;">Установить
+                PWA</button>
         </div>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-        // Функция для проверки, можно ли установить PWA на текущем устройстве
-        function isPwaInstallable() {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-            const isInBrowser = window.navigator.standalone === true;
-            const isAndroid = window.navigator.userAgent.toLowerCase().includes('android');
-            return isAndroid && !isStandalone && !isInBrowser;
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
         }
 
-        // Показываем кнопку установки только если возможно установить PWA
-        if (isPwaInstallable()) {
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
             document.getElementById('installButton').style.display = 'block';
-        }
+        });
 
-        // Обработчик события для установки приложения
         document.getElementById('installButton').addEventListener('click', () => {
-            alert('Чтобы установить приложение, нажмите на меню браузера и выберите "Добавить на главный экран" или "Установить приложение".');
+            document.getElementById('installButton').style.display = 'none';
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Пользователь установил приложение');
+                } else {
+                    console.log('Пользователь отменил установку');
+                }
+                deferredPrompt = null;
+            });
         });
     </script>
     </body>
